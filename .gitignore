@@ -1,0 +1,9 @@
+dist/
+*.test
+.DS_Store
+
+# TS 绑定（ts/）
+node_modules/
+ts/dist/
+ts/.engine-bin/
+*.tgz

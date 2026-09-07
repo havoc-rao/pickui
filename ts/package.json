@@ -1,0 +1,68 @@
+{
+  "name": "@havoc-rao/pickui",
+  "version": "0.1.0",
+  "description": "TUI candidate picker — TS/JS bindings for the pickui engine (protocol v1). Filter / pick / history / confirm, tree-shakable, same behavior as the Go engine.",
+  "license": "MIT",
+  "author": "havoc-rao",
+  "keywords": [
+    "tui",
+    "picker",
+    "fzf",
+    "filter",
+    "select",
+    "menu"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./filter": {
+      "types": "./dist/types/filter.d.ts",
+      "import": "./dist/esm/filter.js",
+      "require": "./dist/cjs/filter.js"
+    },
+    "./tui": {
+      "types": "./dist/types/tui.d.ts",
+      "import": "./dist/esm/tui.js",
+      "require": "./dist/cjs/tui.js"
+    },
+    "./history": {
+      "types": "./dist/types/history.d.ts",
+      "import": "./dist/esm/history.js",
+      "require": "./dist/cjs/history.js"
+    },
+    "./confirm": {
+      "types": "./dist/types/confirm.d.ts",
+      "import": "./dist/esm/confirm.js",
+      "require": "./dist/cjs/confirm.js"
+    },
+    "./types": {
+      "types": "./dist/types/types.d.ts",
+      "import": "./dist/esm/types.js",
+      "require": "./dist/cjs/types.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/fixup.mjs",
+    "pretest": "node scripts/build-engine.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "test:pack": "npm run build && node scripts/test-pack.mjs",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "typescript": "^5.5.0"
+  }
+}
