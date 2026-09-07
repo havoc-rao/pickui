@@ -7,6 +7,29 @@ Go / TypeScript / JavaScript 宿主拿到**同样效果**。
 fzf 风格的实时过滤选择器，源自 shr 的 `pick`/`_menu` 组件，抽离为独立可发布项目：
 候选来源 → 过滤 → TUI 选择 → 输出选中值。
 
+## How to use（引用包）
+
+| 语言 | 安装 | 引用路径 |
+|---|---|---|
+| **Go**（引擎本体） | `go get github.com/havoc-rao/pickui/go@v0.1.0` | [pkg.go.dev/github.com/havoc-rao/pickui/go](https://pkg.go.dev/github.com/havoc-rao/pickui/go) → `import pickui "github.com/havoc-rao/pickui/go"` |
+| **TS / JS**（薄绑定） | `npm install @havocrao/pickui` | [npmjs.com/package/@havocrao/pickui](https://www.npmjs.com/package/@havocrao/pickui) → `import { filter } from '@havocrao/pickui'` / `const { pick } = require('@havocrao/pickui')` |
+| **引擎二进制**（任意宿主/脚本） | `go build -C go -o dist/pickui ./cmd/pickui` | [github.com/havoc-rao/pickui](https://github.com/havoc-rao/pickui) · [docs/protocol.md](docs/protocol.md) → `pickui pick/filter/resolve/hist/confirm` |
+
+```go
+// Go：过滤 / 选择器 / 记忆，全部函数直调
+import pickui "github.com/havoc-rao/pickui/go"
+hits := pickui.FilterStructuredCandidates(cands, "ele dev", pickui.FilterOptions{})
+```
+
+```ts
+// TS：同一引擎的效果，薄绑定经 JSON 协议调用
+import { filter, pick, histGet } from '@havocrao/pickui';
+const hits = await filter(['electron:dev', 'electron:build'], 'ele dev'); // + 高亮区间
+```
+
+完整能力（filter / tui / history / confirm / 嵌入宿主对齐）见下方「快速开始」与
+[go/README.md](go/README.md)、[ts/README.md](ts/README.md)。
+
 ## 仓库布局：每个语言包一个平级子目录
 
 ```
