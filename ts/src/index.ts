@@ -1,8 +1,8 @@
 /**
  * index — 聚合导出；亦支持按模块 import（tree-shakable）：
- *   import { filter } from '@havoc-rao/pickui/filter'
- *   import { pick } from '@havoc-rao/pickui/tui'
- *   import { histGet } from '@havoc-rao/pickui/history'
+ *   import { filter } from '@havocrao/pickui/filter'
+ *   import { pick } from '@havocrao/pickui/tui'
+ *   import { histGet } from '@havocrao/pickui/history'
  */
 export * from './types.js';
 export * from './engine.js';

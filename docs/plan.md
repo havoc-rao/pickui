@@ -18,7 +18,7 @@ shr 的 `pick` / `_menu` / `tui` / 过滤引擎是一块自洽、与规则树零
 │  Go 项目：import github.com/havoc-rao/pickui/go      │
 │    ├─ filter（纯函数）   tui（选择器）  history/confirm  │
 │    └─ Pick/Menu（完整 CLI 命令嵌入）                    │
-│  TS/JS 项目：npm 包 @havoc-rao/pickui                  │
+│  TS/JS 项目：npm 包 @havocrao/pickui                  │
 │    ├─ filter()           pick()          history()     │
 │    └─ 按模块 import，tree-shakable，效果与 Go 一致       │
 └──────────────┬──────────────────────────┬──────────────┘
@@ -41,7 +41,7 @@ shr 的 `pick` / `_menu` / `tui` / 过滤引擎是一块自洽、与规则树零
 
 > 仓库布局：多包 monorepo，**每个语言包一个平级子目录，Go 不占用根目录**——
 > `go/`（Go 引擎模块 `github.com/havoc-rao/pickui/go`，含引擎库与 `cmd/pickui`
-> 二进制）、`ts/`（npm 包 `@havoc-rao/pickui`，esm+cjs+d.ts 双格式同时服务
+> 二进制）、`ts/`（npm 包 `@havocrao/pickui`，esm+cjs+d.ts 双格式同时服务
 > TS 与 JS）、`docs/`。根目录只放仓库级内容（README/LICENSE/docs/CI/聚合
 > Makefile）。各包独立管理版本、独立发布（Go 前缀 tag `go/vX.Y.Z` / npm
 > version）；将来 `py/`、`js/` 等新语言绑定按「多语言扩展约定」平级加入。
@@ -101,7 +101,7 @@ shr 即按 4.1 接入：`SetName("shr")`、`SetOffEnv("SHR_PICK")`、
 
 ### 4.2 TS / JS 绑定（M2，本 plan 预留设计）
 
-npm 包 `@havoc-rao/pickui`（esm + cjs 双输出，模块按需 import）：
+npm 包 `@havocrao/pickui`（esm + cjs 双输出，模块按需 import）：
 
 | 模块 | 能力 | 实现 |
 |---|---|---|
@@ -118,7 +118,7 @@ npm 包 `@havoc-rao/pickui`（esm + cjs 双输出，模块按需 import）：
 
 | 需求 | Go | TS/JS |
 |---|---|---|
-| 只要过滤/高亮 | `FilterStructuredCandidates` | `import { filter } from '@havoc-rao/pickui/filter'` |
+| 只要过滤/高亮 | `FilterStructuredCandidates` | `import { filter } from '@havocrao/pickui/filter'` |
 | 只要交互选择器 | `tui.Run` | `pick()` / `menu()` |
 | 只要选择记忆 | `SavePick/LastPick` | `history.get/set` |
 | 只要 --auto 解析 | `AutoResolve` | `resolve()` |
@@ -164,7 +164,7 @@ npm 包 `@havoc-rao/pickui`（esm + cjs 双输出，模块按需 import）：
 2. 提交（含 docs/plan.md、docs/protocol.md）→ push → 打 `v0.1.0` tag。
 3. shr 移除 replace，依赖 `github.com/havoc-rao/pickui/go v0.1.0`，全量测试后单独 commit。
 4. M2：TS/JS 绑定入库（`ts/`），`npm publish`（需 npm 账号/token，
-   用户执行或提供；包名 `@havoc-rao/pickui`）。
+   用户执行或提供；包名 `@havocrao/pickui`）。
 5. 后续可选：GoReleaser 交叉编译 + npm 平台 optionalDependencies 二进制包，
    `PICKUI_BIN` 自动探测完善。
 

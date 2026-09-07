@@ -1,5 +1,5 @@
 {
-  "name": "@havoc-rao/pickui",
+  "name": "@havocrao/pickui",
   "version": "0.1.0",
   "description": "TUI candidate picker — TS/JS bindings for the pickui engine (protocol v1). Filter / pick / history / confirm, tree-shakable, same behavior as the Go engine.",
   "license": "MIT",

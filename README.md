@@ -14,7 +14,7 @@ pickui/
 ├── go/                    ← Go 引擎包（模块 github.com/havoc-rao/pickui/go）
 │   ├── cmd/pickui/        引擎二进制：协议子命令（pick/menu/filter/resolve/hist/confirm）
 │   └── *.go               引擎库（package pickui）：filter / tui / history / confirm
-├── ts/                    ← npm 包 @havoc-rao/pickui（TS + JS 双格式）
+├── ts/                    ← npm 包 @havocrao/pickui（TS + JS 双格式）
 │   ├── src/               filter / tui / history / confirm / types（按模块 import，tree-shakable）
 │   ├── test/              node:test 集成测试（对真实引擎二进制）
 │   └── scripts/           引擎构建 / npm pack 可安装性验证
@@ -29,8 +29,8 @@ pickui/
 `py/`、`js/` 等新语言绑定，按同规格平级新增（见「多语言扩展约定」）。
 
 - **Go 包**：`import "github.com/havoc-rao/pickui/go"` —— 引擎本体，函数直调（同进程）。
-- **TS/JS 包**：`import { filter } from '@havoc-rao/pickui'` /
-  `const { pick } = require('@havoc-rao/pickui')` —— 薄绑定，child_process + JSON 协议
+- **TS/JS 包**：`import { filter } from '@havocrao/pickui'` /
+  `const { pick } = require('@havocrao/pickui')` —— 薄绑定，child_process + JSON 协议
   调引擎；同一份 dist 同时产出 esm（TS/ESM-import）与 cjs（JS/require）。
 - **引擎二进制**：协议实现唯一权威，渲染/按键/匹配只存在于 Go 引擎；
   绑定层（或 shell 脚本）按 [docs/protocol.md](docs/protocol.md) 直接消费。
@@ -98,10 +98,10 @@ $ cd ts && npm install && npm run build && npm test
 ```
 
 ```ts
-import { filter, resolve, pick, histGet, histSet, confirmCheck, confirmAdd } from '@havoc-rao/pickui';
+import { filter, resolve, pick, histGet, histSet, confirmCheck, confirmAdd } from '@havocrao/pickui';
 // 按模块 import（tree-shakable）：
-// import { filter } from '@havoc-rao/pickui/filter'
-// import { pick, menu } from '@havoc-rao/pickui/tui'
+// import { filter } from '@havocrao/pickui/filter'
+// import { pick, menu } from '@havocrao/pickui/tui'
 
 const hits = await filter(['electron:dev', 'electron:build', 'serve'], 'ele dev');
 // [{ value: 'electron:dev', desc: '', ranges: [[0,3],[9,12]] }]
@@ -115,7 +115,7 @@ await confirmAdd('npm run', 'release'); await confirmCheck('npm run', 'release')
 
 ```js
 // JS（CommonJS）同样直接调用：
-const { pick, histGet } = require('@havoc-rao/pickui');
+const { pick, histGet } = require('@havocrao/pickui');
 ```
 
 引擎发现顺序：`$PICKUI_BIN` → `$PATH` 中的 `pickui`。交互 TUI 由引擎跑在
@@ -145,8 +145,8 @@ stderr。完整协议见 [docs/protocol.md](docs/protocol.md)。
 | 用户写 | 落到仓库 | 机制 |
 |---|---|---|
 | `import "github.com/havoc-rao/pickui/go"` | `go/` | Go 按 import path 找到仓库 `go/go.mod`（module `github.com/havoc-rao/pickui/go`，多模块仓库规范） |
-| `import '@havoc-rao/pickui'` | `ts/` | npm 发布物即 `ts/` 目录内容；包名与目录解耦 |
-| `import '@havoc-rao/pickui/tui'` | `ts/dist/esm/tui.js` | `package.json` `exports` 子路径映射（require → `dist/cjs/*.js`，types → `dist/types/*.d.ts`） |
+| `import '@havocrao/pickui'` | `ts/` | npm 发布物即 `ts/` 目录内容；包名与目录解耦 |
+| `import '@havocrao/pickui/tui'` | `ts/dist/esm/tui.js` | `package.json` `exports` 子路径映射（require → `dist/cjs/*.js`，types → `dist/types/*.d.ts`） |
 | `PICKUI_BIN=/…/pickui` | 引擎二进制 | 跨语言消费引擎的唯一通道（TS 绑定/脚本），指向 `go/cmd/pickui` 构建产物 |
 
 依赖方向只有一条：**ts/ → 引擎二进制（JSON 协议）**；ts/ 不依赖 go/ 的 Go
@@ -157,7 +157,7 @@ stderr。完整协议见 [docs/protocol.md](docs/protocol.md)。
 | 包 | 位置 | 版本管理 |
 |---|---|---|
 | Go 引擎 | `go/`（github.com/havoc-rao/pickui/go） | git tag `go/v0.1.0`（多模块仓库前缀 tag，根 tag `v0.1.0` 亦可） |
-| npm 包 | `ts/`（@havoc-rao/pickui） | package.json `version`（同号对齐，如 0.1.0） |
+| npm 包 | `ts/`（@havocrao/pickui） | package.json `version`（同号对齐，如 0.1.0） |
 
 **本地开发（未发布）**：
 
@@ -168,7 +168,7 @@ replace github.com/havoc-rao/pickui/go => ../pickui/go
 
 ```jsonc
 // TS/JS 宿主：package.json 加
-{ "dependencies": { "@havoc-rao/pickui": "file:../pickui/ts" } }
+{ "dependencies": { "@havocrao/pickui": "file:../pickui/ts" } }
 // 任意宿主：把 go/cmd/pickui 构建的二进制放入 PATH，或设 PICKUI_BIN 指过去
 ```
 

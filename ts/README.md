@@ -1,4 +1,4 @@
-# @havoc-rao/pickui — TS/JS 绑定
+# @havocrao/pickui — TS/JS 绑定
 
 薄绑定：只做「候选传入、结果取回」，渲染/按键/匹配全部在 Go 引擎
 （`../go/cmd/pickui`）内完成，效果与 Go 宿主逐像素一致。
@@ -7,7 +7,7 @@
 ## 安装
 
 ```console
-$ npm install @havoc-rao/pickui
+$ npm install @havocrao/pickui
 ```
 
 引擎发现顺序：`$PICKUI_BIN` → `$PATH` 中的 `pickui`。交互 TUI 由引擎跑在
@@ -18,12 +18,12 @@ $ npm install @havoc-rao/pickui
 ## API
 
 ```ts
-import { filter, resolve } from '@havoc-rao/pickui/filter'
-import { pick, menu, rawPick } from '@havoc-rao/pickui/tui'
-import { histGet, histSet } from '@havoc-rao/pickui/history'
-import { confirmCheck, confirmAdd } from '@havoc-rao/pickui/confirm'
-import type { Candidate, FilterOptions, FilteredCandidate, PickFlags } from '@havoc-rao/pickui/types'
-import { engineVersion, assertEngineVersion } from '@havoc-rao/pickui'
+import { filter, resolve } from '@havocrao/pickui/filter'
+import { pick, menu, rawPick } from '@havocrao/pickui/tui'
+import { histGet, histSet } from '@havocrao/pickui/history'
+import { confirmCheck, confirmAdd } from '@havocrao/pickui/confirm'
+import type { Candidate, FilterOptions, FilteredCandidate, PickFlags } from '@havocrao/pickui/types'
+import { engineVersion, assertEngineVersion } from '@havocrao/pickui'
 ```
 
 | 函数 | 说明 |

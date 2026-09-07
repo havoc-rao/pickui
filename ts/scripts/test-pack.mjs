@@ -1,7 +1,7 @@
 // test-pack — 打包为 npm 安装包并在干净目录验证「作为包直接调用」：
-//   import { filter } from '@havoc-rao/pickui'
-//   import { pick } from '@havoc-rao/pickui/tui'
-//   const { histGet } = require('@havoc-rao/pickui')
+//   import { filter } from '@havocrao/pickui'
+//   import { pick } from '@havocrao/pickui/tui'
+//   const { histGet } = require('@havocrao/pickui')
 //
 // 用法：npm run test:pack（依赖已构建的 dist 与引擎二进制）。
 import { execFileSync } from 'node:child_process';
@@ -55,11 +55,11 @@ try {
         require('node:fs').mkdtempSync(require('node:os').tmpdir() + '/pickui-pack-state-');
       // ESM：聚合入口 + 子路径（tree-shakable 契约）
       const { filter, resolve, histGet, histSet, confirmAdd, confirmCheck, engineVersion } =
-        await import('@havoc-rao/pickui');
-      const { pick } = await import('@havoc-rao/pickui/tui');
-      const { menu } = await import('@havoc-rao/pickui/tui');
+        await import('@havocrao/pickui');
+      const { pick } = await import('@havocrao/pickui/tui');
+      const { menu } = await import('@havocrao/pickui/tui');
       // CJS：require 聚合入口
-      const cjs = require('@havoc-rao/pickui');
+      const cjs = require('@havocrao/pickui');
 
       const hits = await filter(['electron:dev', 'electron:build'], 'ele dev');
       assert.deepEqual(hits.map(h => h.value), ['electron:dev']);
