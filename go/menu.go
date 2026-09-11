@@ -2,7 +2,7 @@
 //
 // 由宿主 shell wrapper 的函数回调：
 //
-//	pickui _menu "<label>" <cand1> <cand2> ...
+//	picktui _menu "<label>" <cand1> <cand2> ...
 //
 // TUI 渲染到 /dev/tty（不被 $(...) 命令替换捕获），选中候选写到 out 供
 // wrapper 捕获后 command 执行；取消则返回非零（130），wrapper 据退出码中止执行。
@@ -10,7 +10,7 @@
 //
 // 交互：输入过滤（子串 AND）、高亮、视口滚动，另保留菜单特有的数字键 1-9 直选
 // （无输入时生效；输入后数字作为过滤字符）。MemoryKey 即 label。
-package pickui
+package picktui
 
 import (
 	"fmt"

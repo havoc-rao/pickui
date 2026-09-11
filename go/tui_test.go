@@ -1,5 +1,5 @@
-// Package pickui: 过滤选择器 TUI 模型的按键行为测试（内部包，直接驱动 model）。
-package pickui
+// Package picktui: 过滤选择器 TUI 模型的按键行为测试（内部包，直接驱动 model）。
+package picktui
 
 import (
 	"testing"

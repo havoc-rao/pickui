@@ -2,9 +2,9 @@
 //
 // 约定：选中值（数据）直写 out，绝不染色；错误/警告消息写 errw，行首的
 // "<命令名> <子命令>:" 前缀在流为交互式终端时着红色粗体，帮助快速定位来源。
-// 管道/重定向/脚本消费时自动降级为纯文本，保证 `pickui pick | grep`、
-// eval "$(pickui pick ...)" 等场景输出不受污染。
-package pickui
+// 管道/重定向/脚本消费时自动降级为纯文本，保证 `picktui pick | grep`、
+// eval "$(picktui pick ...)" 等场景输出不受污染。
+package picktui
 
 import (
 	"fmt"

@@ -14,7 +14,7 @@
 //
 // 渲染与按键唯一实现在引擎（本包），任何语言宿主经协议子命令拿到同样的
 // 视觉与交互效果；绑定层禁止自绘或重实现匹配。
-package pickui
+package picktui
 
 import (
 	"fmt"

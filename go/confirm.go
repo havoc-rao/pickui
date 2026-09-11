@@ -7,12 +7,12 @@
 //
 // 文件格式（TOML，位于数据目录 confirm.toml）：
 //
-//	# pickui confirm — user-confirmed auto resolutions (auto-managed)
+//	# picktui confirm — user-confirmed auto resolutions (auto-managed)
 //	[confirmed]
 //	"npm run" = ["release", "dev"]
 //
 // 纯文件存储、无 UI，不依赖 TUI，可独立单测。
-package pickui
+package picktui
 
 import (
 	"bytes"

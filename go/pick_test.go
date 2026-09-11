@@ -1,6 +1,6 @@
-// Package pickui_test: Pick 命令非交互路径黑盒测试
+// Package picktui_test: Pick 命令非交互路径黑盒测试
 // （env off / openTTY 失败注入，均不触碰真实 TTY）。
-package pickui_test
+package picktui_test
 
 import (
 	"bytes"
@@ -9,15 +9,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/havoc-rao/pickui/go"
+	"github.com/havoc-rao/picktui/go"
 )
 
-// pickOff 以 PICKUI_PICK=off 运行 Pick（确定性非交互）。
+// pickOff 以 PICKTUI_PICK=off 运行 Pick（确定性非交互）。
 func pickOff(t *testing.T, args ...string) (code int, out, errw string) {
 	t.Helper()
-	t.Setenv("PICKUI_PICK", "off")
+	t.Setenv("PICKTUI_PICK", "off")
 	var ob, eb bytes.Buffer
-	code = pickui.Pick(args, &ob, &eb)
+	code = picktui.Pick(args, &ob, &eb)
 	return code, ob.String(), eb.String()
 }
 
@@ -40,7 +40,7 @@ func TestPickNonInteractiveQueryNoMatch(t *testing.T) {
 	if code != 1 {
 		t.Fatalf("Pick(-q zzz) = %d, want 1", code)
 	}
-	if !strings.Contains(errw, `pickui pick: no match for "zzz"`) {
+	if !strings.Contains(errw, `picktui pick: no match for "zzz"`) {
 		t.Fatalf("stderr = %q, want no-match error", errw)
 	}
 }
@@ -51,7 +51,7 @@ func TestPickNoCandidates(t *testing.T) {
 	if code != 1 {
 		t.Fatalf("Pick() = %d, want 1", code)
 	}
-	if !strings.Contains(errw, "pickui pick: no candidates") {
+	if !strings.Contains(errw, "picktui pick: no candidates") {
 		t.Fatalf("stderr = %q, want no-candidates error", errw)
 	}
 }
@@ -96,10 +96,10 @@ func TestPickMapperScriptMissingRendersGuidance(t *testing.T) {
 		t.Fatalf("Pick(missing mapper script) = %d, want 1", code)
 	}
 	for _, want := range []string{
-		"pickui pick: printf 'x\\n' | node /definitely/not/here/runner.mjs:",
+		"picktui pick: printf 'x\\n' | node /definitely/not/here/runner.mjs:",
 		"map 脚本文件不存在: /definitely/not/here/runner.mjs",
 		"→ 脚本可能已被移动、删除或重命名",
-		"`pickui add <cmd> --pick '<cmd>' --map '<新命令>'`",
+		"`picktui add <cmd> --pick '<cmd>' --map '<新命令>'`",
 	} {
 		if !strings.Contains(errw, want) {
 			t.Fatalf("stderr = %q, want containing %q", errw, want)
@@ -134,12 +134,12 @@ func TestPickSelect1(t *testing.T) {
 }
 
 func TestPickAutoResolveOffEnvSkipsConfirm(t *testing.T) {
-	dir := pickuiConfigDir(t)
+	dir := picktuiConfigDir(t)
 	code, out, _ := pickOff(t, "--auto", "-q", "re", "build", "release", "serve")
 	if code != 0 || out != "release\n" {
 		t.Fatalf("Pick(--auto re) = %d, out %q, want 0, \"release\\n\"", code, out)
 	}
-	// PICKUI_PICK=off 跳过确认：confirm.toml 不生成
+	// PICKTUI_PICK=off 跳过确认：confirm.toml 不生成
 	if _, err := os.Stat(filepath.Join(dir, "confirm.toml")); !os.IsNotExist(err) {
 		t.Fatalf("confirm.toml should not be created in off mode: %v", err)
 	}
@@ -157,30 +157,30 @@ func TestPickAutoNoUniqueMatch(t *testing.T) {
 	if code != 1 {
 		t.Fatalf("Pick(--auto ambiguous) = %d, want 1", code)
 	}
-	if !strings.Contains(errw, `pickui pick: no unique match for "re"`) {
+	if !strings.Contains(errw, `picktui pick: no unique match for "re"`) {
 		t.Fatalf("stderr = %q, want no-unique-match error", errw)
 	}
 }
 
 func TestPickLabelSavesHistory(t *testing.T) {
-	pickuiConfigDir(t)
+	picktuiConfigDir(t)
 	code, out, _ := pickOff(t, "--label", "npm run", "-q", "dev", "build", "dev", "serve")
 	if code != 0 || out != "dev\n" {
 		t.Fatalf("Pick(--label) = %d, out %q, want 0, \"dev\\n\"", code, out)
 	}
-	raw := pickui.LoadPickHistory()
-	if got := pickui.LastPick(raw, "npm run"); got != "dev" {
+	raw := picktui.LoadPickHistory()
+	if got := picktui.LastPick(raw, "npm run"); got != "dev" {
 		t.Fatalf("LastPick(npm run) = %q, want dev", got)
 	}
 }
 
 func TestPickSelect1SavesHistory(t *testing.T) {
-	dir := pickuiConfigDir(t)
+	dir := picktuiConfigDir(t)
 	code, out, _ := pickOff(t, "--label", "git p", "-1", "-q", "pull", "pull", "push")
 	if code != 0 || out != "pull\n" {
 		t.Fatalf("Pick(-1 --label) = %d, out %q, want 0, \"pull\\n\"", code, out)
 	}
-	if got := pickui.LastPick(pickui.LoadPickHistory(), "git p"); got != "pull" {
+	if got := picktui.LastPick(picktui.LoadPickHistory(), "git p"); got != "pull" {
 		t.Fatalf("LastPick(git p) = %q, want pull", got)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "history.toml")); err != nil {
@@ -207,7 +207,7 @@ func TestParseConfirmAnswer(t *testing.T) {
 		{"maybe", false},
 	}
 	for _, c := range cases {
-		if got := pickui.ParseConfirmAnswer(c.in); got != c.want {
+		if got := picktui.ParseConfirmAnswer(c.in); got != c.want {
 			t.Errorf("ParseConfirmAnswer(%q) = %v, want %v", c.in, got, c.want)
 		}
 	}
@@ -215,16 +215,16 @@ func TestParseConfirmAnswer(t *testing.T) {
 
 func TestPickUsesHostNameAndOffEnv(t *testing.T) {
 	// shr 嵌入形态：SetName("shr") / SetOffEnv("SHR_PICK") → 消息与开关逐项对齐
-	pickui.SetName("shr")
-	pickui.SetOffEnv("SHR_PICK")
+	picktui.SetName("shr")
+	picktui.SetOffEnv("SHR_PICK")
 	t.Cleanup(func() {
-		pickui.SetName("pickui")
-		pickui.SetOffEnv("PICKUI_PICK")
+		picktui.SetName("picktui")
+		picktui.SetOffEnv("PICKTUI_PICK")
 	})
 	t.Setenv("SHR_PICK", "off")
 
 	var ob, eb bytes.Buffer
-	code := pickui.Pick([]string{"-q", "zzz", "alpha"}, &ob, &eb)
+	code := picktui.Pick([]string{"-q", "zzz", "alpha"}, &ob, &eb)
 	if code != 1 {
 		t.Fatalf("Pick = %d, want 1", code)
 	}

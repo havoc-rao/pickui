@@ -3,18 +3,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
-import { pickui } from './helper.mjs';
+import { picktui } from './helper.mjs';
 
 const { engineBin, engineVersion, assertEngineVersion, versionAtLeast, serializeCandidates } =
-  pickui;
+  picktui;
 
-test('引擎发现：PICKUI_BIN 指向可执行文件', async () => {
+test('引擎发现：PICKTUI_BIN 指向可执行文件', async () => {
   const bin = await engineBin();
   assert.ok(bin.length > 0, 'engineBin 应返回路径');
   assert.ok(existsSync(bin), `引擎二进制应存在: ${bin}`);
 });
 
-test('engineVersion 解析 "pickui <semver>"', async () => {
+test('engineVersion 解析 "picktui <semver>"', async () => {
   const v = await engineVersion();
   assert.match(v, /^\d+\.\d+\.\d+$/);
 });

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/havoc-rao/pickui/go"
+	"github.com/havoc-rao/picktui/go"
 )
 
 // runProto 以给定 stdin/args 执行协议子命令，返回退出码与输出。
@@ -25,7 +25,7 @@ func runProto(t *testing.T, stdin string, args ...string) (code int, out, errw s
 func protoConfigDir(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
-	t.Setenv("PICKUI_CONFIG_DIR", dir)
+	t.Setenv("PICKTUI_CONFIG_DIR", dir)
 	return dir
 }
 
@@ -229,13 +229,13 @@ func TestHistSetErrorPath(t *testing.T) {
 	if err := os.WriteFile(f, []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("PICKUI_CONFIG_DIR", f)
+	t.Setenv("PICKTUI_CONFIG_DIR", f)
 	code, out, errw := runProto(t, "", "hist", "set", "git p", "pull")
 	if code != 1 || out != "" {
 		t.Fatalf("hist set(blocked dir) = %d, out %q, want 1 and empty stdout", code, out)
 	}
-	if !strings.Contains(errw, "pickui hist:") {
-		t.Fatalf("stderr = %q, want pickui hist: error", errw)
+	if !strings.Contains(errw, "picktui hist:") {
+		t.Fatalf("stderr = %q, want picktui hist: error", errw)
 	}
 }
 
@@ -255,7 +255,7 @@ func TestConfirmCheckAddRoundTrip(t *testing.T) {
 	if code, _, _ := runProto(t, "", "confirm", "add", "npm run", "release"); code != 0 {
 		t.Fatalf("confirm add(idempotent) = %d, want 0", code)
 	}
-	m := pickui.LoadConfirmed()
+	m := picktui.LoadConfirmed()
 	if len(m["npm run"]) != 1 {
 		t.Fatalf("confirmed values = %d, want 1", len(m["npm run"]))
 	}
@@ -293,14 +293,14 @@ func TestConfirmUsageErrors(t *testing.T) {
 
 func TestRunVersionAndHelp(t *testing.T) {
 	code, out, _ := runProto(t, "", "version")
-	if code != 0 || !strings.Contains(out, "pickui 0.1.0") {
-		t.Fatalf("version = %d, %q, want pickui 0.1.0", code, out)
+	if code != 0 || !strings.Contains(out, "picktui 0.1.0") {
+		t.Fatalf("version = %d, %q, want picktui 0.1.0", code, out)
 	}
 	code, out, _ = runProto(t, "", "help")
 	if code != 0 {
 		t.Fatalf("help = %d, want 0", code)
 	}
-	for _, want := range []string{"pickui pick", "filter", "resolve", "hist", "confirm", "Exit codes"} {
+	for _, want := range []string{"picktui pick", "filter", "resolve", "hist", "confirm", "Exit codes"} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("help missing %q", want)
 		}
@@ -309,7 +309,7 @@ func TestRunVersionAndHelp(t *testing.T) {
 
 func TestRunPickMenuDispatch(t *testing.T) {
 	// pick：非交互（off）直接输出选中值
-	t.Setenv("PICKUI_PICK", "off")
+	t.Setenv("PICKTUI_PICK", "off")
 	code, out, errw := runProto(t, "", "pick", "alpha", "beta")
 	if code != 0 || out != "alpha\n" {
 		t.Fatalf("pick = %d, %q, want 0, alpha (stderr: %s)", code, out, errw)
@@ -349,7 +349,7 @@ func TestRunNoArgs(t *testing.T) {
 func TestHistSharesLibraryDataDir(t *testing.T) {
 	dir := protoConfigDir(t)
 	// 库 API 写入 → 协议子命令读同一文件
-	if err := pickui.SavePick("shared", "value"); err != nil {
+	if err := picktui.SavePick("shared", "value"); err != nil {
 		t.Fatal(err)
 	}
 	code, out, _ := runProto(t, "", "hist", "get", "shared")

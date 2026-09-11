@@ -1,6 +1,6 @@
-// Package pickui: Pick/Menu 非交互退化的内部测试
+// Package picktui: Pick/Menu 非交互退化的内部测试
 // （openTTY 注入失败，不触碰真实 /dev/tty）。
-package pickui
+package picktui
 
 import (
 	"bytes"
@@ -35,7 +35,7 @@ func TestMenuUsageError(t *testing.T) {
 	if code != 2 {
 		t.Fatalf("Menu(<1 arg) = %d, want 2", code)
 	}
-	if got := eb.String(); got != "usage: pickui _menu <label> <cand...>\n" {
+	if got := eb.String(); got != "usage: picktui _menu <label> <cand...>\n" {
 		t.Fatalf("stderr = %q, want usage text", got)
 	}
 	if ob.String() != "" {
@@ -59,7 +59,7 @@ func TestMenuNonInteractiveFallback(t *testing.T) {
 
 func TestMenuUsageTextFollowsName(t *testing.T) {
 	SetName("shr")
-	defer SetName("pickui")
+	defer SetName("picktui")
 	if got := MenuUsage(); got != "usage: shr _menu <label> <cand...>" {
 		t.Fatalf("MenuUsage() = %q, want shr-branded usage", got)
 	}

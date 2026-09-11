@@ -1,5 +1,5 @@
 /**
- * types — 与 docs/protocol.md 对齐的纯类型（零依赖）。
+ * types — 与 docs/integration/protocol.md 对齐的纯类型（零依赖）。
  *
  * 字段名/形状是协议 v1 的一部分，任何改动需同步 protocol.md 与 Go 引擎。
  */
@@ -49,13 +49,13 @@ export interface PickFlags {
 }
 
 /** 引擎调用失败（退出码非预期）时抛出的错误。 */
-export class PickuiError extends Error {
+export class PicktuiError extends Error {
   readonly exitCode: number;
   readonly stderr: string;
 
   constructor(message: string, exitCode: number, stderr: string) {
     super(message);
-    this.name = 'PickuiError';
+    this.name = 'PicktuiError';
     this.exitCode = exitCode;
     this.stderr = stderr;
   }
@@ -66,9 +66,9 @@ export interface ResolveResult {
   value: string;
 }
 
-/** 引擎 version 输出（"pickui <semver>"）。 */
+/** 引擎 version 输出（"picktui <semver>"）。 */
 export interface EngineVersion {
-  /** 完整输出行，如 "pickui 0.1.0"。 */
+  /** 完整输出行，如 "picktui 0.1.0"。 */
   raw: string;
   /** 语义化版本号，如 "0.1.0"。 */
   version: string;

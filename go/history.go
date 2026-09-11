@@ -3,12 +3,12 @@
 //
 // 文件格式（TOML，位于数据目录 history.toml）：
 //
-//	# pickui history — last selection per key (auto-managed)
+//	# picktui history — last selection per key (auto-managed)
 //	["git p"]
 //	last = "pull"
 //
 // 纯文件存储、无 UI，不依赖 TUI，可独立单测。
-package pickui
+package picktui
 
 import (
 	"bytes"

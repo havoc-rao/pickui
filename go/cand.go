@@ -6,7 +6,7 @@
 //
 // 候选来源：位置参数 / 标准输入 / 执行命令（--from）/+ 转换器（--map）。
 // 与过滤引擎（filter.go）同属纯函数层，不依赖 TUI，可独立单测。
-package pickui
+package picktui
 
 import (
 	"bufio"

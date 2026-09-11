@@ -7,11 +7,11 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const pkgRoot = join(here, '..');
 
-/** 引擎发现：$PICKUI_BIN → .engine-bin 缓存 → 仓库 dist（与引擎侧顺序一致）。 */
+/** 引擎发现：$PICKTUI_BIN → .engine-bin 缓存 → 仓库 dist（与引擎侧顺序一致）。 */
 export function locateEngine() {
-  const name = process.platform === 'win32' ? 'pickui.exe' : 'pickui';
+  const name = process.platform === 'win32' ? 'picktui.exe' : 'picktui';
   const candidates = [
-    process.env.PICKUI_BIN,
+    process.env.PICKTUI_BIN,
     join(pkgRoot, '.engine-bin', name),
     join(pkgRoot, '..', 'dist', name),
   ].filter(Boolean);
@@ -21,26 +21,26 @@ export function locateEngine() {
     }
   }
   throw new Error(
-    '引擎二进制缺失：请先运行 npm run pretest（需要 Go 工具链）或设置 PICKUI_BIN',
+    '引擎二进制缺失：请先运行 npm run pretest（需要 Go 工具链）或设置 PICKTUI_BIN',
   );
 }
 
 // 必须在 import 包之前确定引擎位置
-process.env.PICKUI_BIN = locateEngine();
+process.env.PICKTUI_BIN = locateEngine();
 
 /** 构建产物（ESM）。 */
-export const pickui = await import('../dist/esm/index.js');
+export const picktui = await import('../dist/esm/index.js');
 
 /** 隔离数据目录（hist/confirm 状态），测试后自动还原。 */
 export function withConfigDir(t) {
-  const dir = mkdtempSync(join(tmpdir(), 'pickui-ts-'));
-  const prev = process.env.PICKUI_CONFIG_DIR;
-  process.env.PICKUI_CONFIG_DIR = dir;
+  const dir = mkdtempSync(join(tmpdir(), 'picktui-ts-'));
+  const prev = process.env.PICKTUI_CONFIG_DIR;
+  process.env.PICKTUI_CONFIG_DIR = dir;
   t.after(() => {
     if (prev === undefined) {
-      delete process.env.PICKUI_CONFIG_DIR;
+      delete process.env.PICKTUI_CONFIG_DIR;
     } else {
-      process.env.PICKUI_CONFIG_DIR = prev;
+      process.env.PICKTUI_CONFIG_DIR = prev;
     }
   });
   return dir;

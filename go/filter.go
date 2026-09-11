@@ -1,4 +1,4 @@
-// Package pickui 的 filter 部分：候选匹配引擎——关键字过滤 → 高亮 → 自动解析。
+// Package picktui 的 filter 部分：候选匹配引擎——关键字过滤 → 高亮 → 自动解析。
 //
 // 纯函数无副作用，不依赖 TUI，可独立单测；TUI 与协议子命令（filter/resolve）
 // 共用同一份实现，保证任何宿主拿到的过滤与高亮效果一致。
@@ -8,7 +8,7 @@
 //   - token 前缀（--sep <chars>）：按分隔符集合切 token（默认 _，可多字符如 ":_"），
 //     每关键字匹配某 token 前缀
 //   - 子序列模糊（--fuzzy）：关键字为子序列
-package pickui
+package picktui
 
 import (
 	"sort"

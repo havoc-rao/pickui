@@ -9,8 +9,8 @@ import { assertSuccess, invokeEngine, parseJSON } from './engine.js';
 /** 报告 (label, value) 是否已被确认过。 */
 export async function confirmCheck(label: string, value: string): Promise<boolean> {
   const inv = await invokeEngine(['confirm', 'check', label, value]);
-  assertSuccess(inv, 'pickui confirm check');
-  const parsed = parseJSON<{ confirmed: boolean }>(inv.stdout, 'pickui confirm check');
+  assertSuccess(inv, 'picktui confirm check');
+  const parsed = parseJSON<{ confirmed: boolean }>(inv.stdout, 'picktui confirm check');
   return parsed.confirmed;
 }
 
@@ -20,7 +20,7 @@ export async function confirmCheck(label: string, value: string): Promise<boolea
  */
 export async function confirmAdd(label: string, value: string): Promise<boolean> {
   const inv = await invokeEngine(['confirm', 'add', label, value]);
-  assertSuccess(inv, 'pickui confirm add');
-  const parsed = parseJSON<{ confirmed: boolean }>(inv.stdout, 'pickui confirm add');
+  assertSuccess(inv, 'picktui confirm add');
+  const parsed = parseJSON<{ confirmed: boolean }>(inv.stdout, 'picktui confirm add');
   return parsed.confirmed;
 }

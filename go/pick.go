@@ -10,7 +10,7 @@
 // 作为转换器接收其 stdout（或 stdin）到自身 stdin，输出 key<TAB>des 结构化行，
 // 解析逻辑无需再手拼进 --from。外部解析器（node / python / awk 等）皆可：
 //
-//	pickui pick --from 'npm run' --map 'node ~/.config/pickui/pickers/npm-run.mjs'
+//	picktui pick --from 'npm run' --map 'node ~/.config/picktui/pickers/npm-run.mjs'
 //
 // 也作为扫描宿主（如 shell wrapper）的底层引擎：缩写命中 pick 源时通过
 // <name> pick --from <cmd> --label <path> 调起本命令。
@@ -18,7 +18,7 @@
 // 品牌与约定皆可对齐宿主：SetName（消息前缀/TUI 标题）、SetOffEnv（非交互
 // 开关环境变量）、SetDataDir（记忆/确认文件目录）、SetMapResolver（--map 裸名
 // 解析钩子）。退出码：0 成功 / 1 运行错误 / 2 用法错误 / 130 取消。
-package pickui
+package picktui
 
 import (
 	"bufio"

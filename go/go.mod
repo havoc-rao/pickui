@@ -1,4 +1,4 @@
-module github.com/havoc-rao/pickui/go
+module github.com/havoc-rao/picktui/go
 
 go 1.25.0
 

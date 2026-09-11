@@ -1,9 +1,9 @@
 // filter — 过滤 + 高亮区间（对真实引擎的 JSON 往返集成测试）。
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pickui, withConfigDir } from './helper.mjs';
+import { picktui, withConfigDir } from './helper.mjs';
 
-const { filter, resolve } = pickui;
+const { filter, resolve } = picktui;
 
 test('filter 子串 AND 多关键字 + 高亮区间', async () => {
   const hits = await filter(

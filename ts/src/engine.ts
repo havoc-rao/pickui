@@ -1,9 +1,9 @@
 /**
  * engine — 引擎发现与进程调用（薄绑定核心，零渲染逻辑）。
  *
- * 引擎发现顺序（对齐 docs/protocol.md）：
- *   1. $PICKUI_BIN
- *   2. $PATH 中的 pickui / pickui.exe
+ * 引擎发现顺序（对齐 docs/integration/protocol.md）：
+ *   1. $PICKTUI_BIN
+ *   2. $PATH 中的 picktui / picktui.exe
  *
  * 渲染/按键/匹配全部在引擎内完成；本模块只负责 spawn + stdout/stderr 收集，
  * 保证宿主 stdout 不被污染（交互 TUI 走引擎的 /dev/tty）。
@@ -12,19 +12,19 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { delimiter, join } from 'node:path';
 
-import { PickuiError } from './types.js';
+import { PicktuiError } from './types.js';
 
 /** 绑定声明的最低引擎版本（协议 v1）。 */
 export const MIN_ENGINE_VERSION = '0.1.0';
 
 /** 引擎二进制名（win32 带 .exe 后缀）。 */
 function binName(): string {
-  return process.platform === 'win32' ? 'pickui.exe' : 'pickui';
+  return process.platform === 'win32' ? 'picktui.exe' : 'picktui';
 }
 
 /** 解析引擎二进制绝对路径；找不到时抛出带指引的错误。 */
 export async function engineBin(): Promise<string> {
-  const fromEnv = process.env.PICKUI_BIN;
+  const fromEnv = process.env.PICKTUI_BIN;
   if (fromEnv) {
     return fromEnv;
   }
@@ -37,10 +37,10 @@ export async function engineBin(): Promise<string> {
     }
   }
   throw new Error(
-    `pickui 引擎未找到：请设置 PICKUI_BIN 指向引擎二进制，或将 ${name} 加入 PATH。` +
-      `（引擎即本仓库 Go 模块的 cmd/pickui，` +
+    `picktui 引擎未找到：请设置 PICKTUI_BIN 指向引擎二进制，或将 ${name} 加入 PATH。` +
+      `（引擎即本仓库 Go 模块的 cmd/picktui，` +
       `见 README「引擎二进制」一节；` +
-      `纯数据场景可设 PICKUI_NO_BIN=1 使用内嵌 JS 过滤实现——该实现尚未提供，请先安装引擎。）`,
+      `纯数据场景可设 PICKTUI_NO_BIN=1 使用内嵌 JS 过滤实现——该实现尚未提供，请先安装引擎。）`,
   );
 }
 
@@ -105,26 +105,26 @@ export function assertSuccess(
     return;
   }
   const detail = inv.stderr.trim() || `exit code ${inv.exitCode}`;
-  throw new PickuiError(`${what}失败：${detail}`, inv.exitCode, inv.stderr);
+  throw new PicktuiError(`${what}失败：${detail}`, inv.exitCode, inv.stderr);
 }
 
-/** 解析 stdout 为 JSON（协议输出恒为 JSON）；失败抛 PickuiError。 */
+/** 解析 stdout 为 JSON（协议输出恒为 JSON）；失败抛 PicktuiError。 */
 export function parseJSON<T>(stdout: string, what: string): T {
   try {
     return JSON.parse(stdout) as T;
   } catch {
-    throw new PickuiError(`${what}输出不是合法 JSON：${stdout.slice(0, 200)}`, -1, stdout);
+    throw new PicktuiError(`${what}输出不是合法 JSON：${stdout.slice(0, 200)}`, -1, stdout);
   }
 }
 
-/** 读取引擎版本（"pickui <semver>"）。 */
+/** 读取引擎版本（"picktui <semver>"）。 */
 export async function engineVersion(): Promise<string> {
   const bin = await engineBin();
   const inv = await invokeEngine(['version']);
-  assertSuccess(inv, 'pickui version');
-  const match = /^pickui\s+(\d+\.\d+\.\d+)/.exec(inv.stdout.trim());
+  assertSuccess(inv, 'picktui version');
+  const match = /^picktui\s+(\d+\.\d+\.\d+)/.exec(inv.stdout.trim());
   if (!match) {
-    throw new PickuiError(`无法解析引擎版本：${inv.stdout.trim()}`, inv.exitCode, inv.stdout);
+    throw new PicktuiError(`无法解析引擎版本：${inv.stdout.trim()}`, inv.exitCode, inv.stdout);
   }
   return match[1];
 }
@@ -147,8 +147,8 @@ export function versionAtLeast(a: string, b: string): boolean {
 export async function assertEngineVersion(min = MIN_ENGINE_VERSION): Promise<string> {
   const v = await engineVersion();
   if (!versionAtLeast(v, min)) {
-    throw new PickuiError(
-      `pickui 引擎版本 ${v} 低于绑定要求的最低版本 ${min}（请升级引擎或设置 PICKUI_BIN）`,
+    throw new PicktuiError(
+      `picktui 引擎版本 ${v} 低于绑定要求的最低版本 ${min}（请升级引擎或设置 PICKTUI_BIN）`,
       -1,
       '',
     );

@@ -2,7 +2,7 @@
  * tui — 交互选择 / 菜单（引擎跑 TUI，宿主零渲染）。
  *
  * 交互渲染与按键输入走引擎的 /dev/tty；本模块的 stdout 仅收选中值——
- * 与 `$(pickui pick ...)` 同样的安全语义。无 TTY 时引擎自动退化
+ * 与 `$(picktui pick ...)` 同样的安全语义。无 TTY 时引擎自动退化
  * （无 query 取首个、有 query 过滤取首），绑定无需分支。
  */
 import { assertSuccess, invokeEngine, serializeCandidates } from './engine.js';
@@ -42,7 +42,7 @@ export async function pick(
   if (inv.exitCode === 130) {
     return null; // 取消
   }
-  assertSuccess(inv, 'pickui pick');
+  assertSuccess(inv, 'picktui pick');
   return inv.stdout.replace(/\r?\n$/, '');
 }
 
@@ -58,7 +58,7 @@ export async function menu(label: string, cands: string[]): Promise<string | nul
   if (inv.exitCode === 130) {
     return null;
   }
-  assertSuccess(inv, 'pickui _menu');
+  assertSuccess(inv, 'picktui _menu');
   return inv.stdout.replace(/\r?\n$/, '');
 }
 
@@ -72,6 +72,6 @@ export async function rawPick(args: string[]): Promise<string | null> {
   if (inv.exitCode === 130) {
     return null;
   }
-  assertSuccess(inv, 'pickui pick');
+  assertSuccess(inv, 'picktui pick');
   return inv.stdout.replace(/\r?\n$/, '');
 }

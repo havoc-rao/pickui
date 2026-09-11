@@ -1,29 +1,29 @@
-# @havocrao/pickui — TS/JS 绑定
+# @havocrao/picktui — TS/JS 绑定
 
 薄绑定：只做「候选传入、结果取回」，渲染/按键/匹配全部在 Go 引擎
-（`../go/cmd/pickui`）内完成，效果与 Go 宿主逐像素一致。
+（`../go/cmd/picktui`）内完成，效果与 Go 宿主逐像素一致。
 同份源码构建 esm + cjs + d.ts，TS 与 JS 共用。
 
 ## 安装
 
 ```console
-$ npm install @havocrao/pickui
+$ npm install @havocrao/picktui
 ```
 
-引擎发现顺序：`$PICKUI_BIN` → `$PATH` 中的 `pickui`。交互 TUI 由引擎跑在
+引擎发现顺序：`$PICKTUI_BIN` → `$PATH` 中的 `picktui`。交互 TUI 由引擎跑在
 `/dev/tty`，本包 stdout 只回选中值。无 TTY 时引擎自动退化
 （无 query 取首个、有 query 过滤取首），绑定无需分支；
-取消（esc/ctrl+c）返回 `null`；协议错误抛出 `PickuiError`（含 exitCode/stderr）。
+取消（esc/ctrl+c）返回 `null`；协议错误抛出 `PicktuiError`（含 exitCode/stderr）。
 
 ## API
 
 ```ts
-import { filter, resolve } from '@havocrao/pickui/filter'
-import { pick, menu, rawPick } from '@havocrao/pickui/tui'
-import { histGet, histSet } from '@havocrao/pickui/history'
-import { confirmCheck, confirmAdd } from '@havocrao/pickui/confirm'
-import type { Candidate, FilterOptions, FilteredCandidate, PickFlags } from '@havocrao/pickui/types'
-import { engineVersion, assertEngineVersion } from '@havocrao/pickui'
+import { filter, resolve } from '@havocrao/picktui/filter'
+import { pick, menu, rawPick } from '@havocrao/picktui/tui'
+import { histGet, histSet } from '@havocrao/picktui/history'
+import { confirmCheck, confirmAdd } from '@havocrao/picktui/confirm'
+import type { Candidate, FilterOptions, FilteredCandidate, PickFlags } from '@havocrao/picktui/types'
+import { engineVersion, assertEngineVersion } from '@havocrao/picktui'
 ```
 
 | 函数 | 说明 |

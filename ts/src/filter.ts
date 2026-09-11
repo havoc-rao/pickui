@@ -2,7 +2,7 @@
  * filter / resolve — 纯函数数据面（直调引擎 filter/resolve --json）。
  *
  * 过滤与高亮区间由引擎权威计算；本模块只做「候选传入、JSON 取回」，
- * 禁止重实现匹配（详见 docs/protocol.md 兼容性承诺）。
+ * 禁止重实现匹配（详见 docs/integration/protocol.md 兼容性承诺）。
  */
 import {
   assertSuccess,
@@ -41,8 +41,8 @@ export async function filter(
     ['filter', '--json', '--query', query, ...modeArgs(opts)],
     { input: serializeCandidates(cands) },
   );
-  assertSuccess(inv, 'pickui filter');
-  return parseJSON<FilteredCandidate[]>(inv.stdout, 'pickui filter');
+  assertSuccess(inv, 'picktui filter');
+  return parseJSON<FilteredCandidate[]>(inv.stdout, 'picktui filter');
 }
 
 /**
@@ -62,7 +62,7 @@ export async function resolve(
   if (inv.exitCode === 1) {
     return null; // 协议：无唯一解 → stdout 空 + 退出码 1
   }
-  assertSuccess(inv, 'pickui resolve');
-  const parsed = parseJSON<ResolveResult>(inv.stdout, 'pickui resolve');
+  assertSuccess(inv, 'picktui resolve');
+  const parsed = parseJSON<ResolveResult>(inv.stdout, 'picktui resolve');
   return parsed.value as string;
 }
