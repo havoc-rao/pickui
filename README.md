@@ -1,7 +1,7 @@
 # picktui
 
 多语言可复用的 TUI 候选选择器：**Go 引擎（单一事实源）+ 稳定 JSON 协议 +
-各语言薄绑定**。只要过滤、只要选择器、只要记忆 —— 取其一即可；
+各语言绑定**。只要过滤、只要选择器、只要记忆 —— 取其一即可；
 Go / TypeScript / JavaScript 宿主拿到**同样效果**。
 
 fzf 风格的实时过滤选择器，源自 shr 的 `pick`/`_menu` 组件，抽离为独立可发布项目：
@@ -12,7 +12,7 @@ fzf 风格的实时过滤选择器，源自 shr 的 `pick`/`_menu` 组件，抽�
 | 语言 | 安装 | 引用路径 |
 |---|---|---|
 | **Go**（引擎本体） | `go get github.com/havoc-rao/picktui/go@v0.1.0` | [pkg.go.dev/github.com/havoc-rao/picktui/go](https://pkg.go.dev/github.com/havoc-rao/picktui/go) → `import picktui "github.com/havoc-rao/picktui/go"` |
-| **TS / JS**（薄绑定） | `npm install @havocrao/picktui` | [npmjs.com/package/@havocrao/picktui](https://www.npmjs.com/package/@havocrao/picktui) → `import { filter } from '@havocrao/picktui'` / `const { pick } = require('@havocrao/picktui')` |
+| **TS / JS**（纯 TS 实现） | `npm install @havocrao/picktui` | [npmjs.com/package/@havocrao/picktui](https://www.npmjs.com/package/@havocrao/picktui) → `import { filter } from '@havocrao/picktui'` / `const { pick } = require('@havocrao/picktui')` |
 | **引擎二进制**（任意宿主/脚本） | `go build -C go -o dist/picktui ./cmd/picktui` | [github.com/havoc-rao/picktui](https://github.com/havoc-rao/picktui) · [docs/integration/protocol.md](docs/integration/protocol.md) → `picktui pick/filter/resolve/hist/confirm` |
 
 ```go
@@ -37,10 +37,10 @@ picktui/
 ├── go/                    ← Go 引擎包（模块 github.com/havoc-rao/picktui/go）
 │   ├── cmd/picktui/        引擎二进制：协议子命令（pick/menu/filter/resolve/hist/confirm）
 │   └── *.go               引擎库（package picktui）：filter / tui / history / confirm
-├── ts/                    ← npm 包 @havocrao/picktui（TS + JS 双格式）
+├── ts/                    ← npm 包 @havocrao/picktui（纯 TS 实现，零依赖）
 │   ├── src/               filter / tui / history / confirm / types（按模块 import，tree-shakable）
-│   ├── test/              node:test 集成测试（对真实引擎二进制）
-│   └── scripts/           引擎构建 / npm pack 可安装性验证
+│   ├── test/              node:test 全量测试（纯 JS 断言，无需引擎）
+│   └── scripts/           npm pack 可安装性验证
 ├── docs/
 │   ├── README.md          文档索引（开发 / 接入两套入口）
 │   ├── dev/               开发文档：plan.md（设计与迁移说明）
@@ -54,8 +54,9 @@ picktui/
 
 - **Go 包**：`import "github.com/havoc-rao/picktui/go"` —— 引擎本体，函数直调（同进程）。
 - **TS/JS 包**：`import { filter } from '@havocrao/picktui'` /
-  `const { pick } = require('@havocrao/picktui')` —— 薄绑定，child_process + JSON 协议
-  调引擎；同一份 dist 同时产出 esm（TS/ESM-import）与 cjs（JS/require）。
+  `const { pick } = require('@havocrao/picktui')` —— 纯 TS 实现（匹配/高亮/交互/
+  记忆均在 JS 内完成，零运行时依赖，无需引擎二进制）；同一份 dist 同时产出
+  esm（TS/ESM-import）与 cjs（JS/require）。
 - **引擎二进制**：协议实现唯一权威，渲染/按键/匹配只存在于 Go 引擎；
   绑定层（或 shell 脚本）按 [docs/integration/protocol.md](docs/integration/protocol.md) 直接消费。
 - 各包**独立管理版本、独立发布**：Go 模块按 git tag（`go/v0.1.0`）发布，npm 包按
@@ -68,8 +69,9 @@ picktui/
 
 1. **平级子目录**：`<lang>/` 不嵌套、不占用根目录；目录内自包含（README、
    版本声明、源码、测试）。
-2. **引擎发现**：`$PICKTUI_BIN` → 平台 optionalDependencies 二进制包 → `PATH`
-   （TS 绑定已实现此顺序，其他语言照抄）。
+2. **引擎发现**（采用"二进制引擎"模式的绑定）：`$PICKTUI_BIN` → 平台
+   optionalDependencies 二进制包 → `PATH`。
+   （TS 绑定为纯 TS 实现，不依赖引擎二进制；新增语言可二选一：纯实现或薄绑定。）
 3. **协议即契约**：只消费 `docs/integration/protocol.md`（子命令、JSON 字段、退出码 0/1/2/130）；
    禁止重实现渲染/匹配；`picktui version` 校验引擎最低版本。
 4. **测试**：对真实引擎二进制的集成测试（JSON 往返），交互 TUI 由引擎侧
@@ -131,7 +133,7 @@ const hits = await filter(['electron:dev', 'electron:build', 'serve'], 'ele dev'
 // [{ value: 'electron:dev', desc: '', ranges: [[0,3],[9,12]] }]
 
 const v = await resolve(['build', 'release', 'serve'], 're'); // 'release' | null
-const chosen = await pick(['alpha', 'beta'], { query: 'beta' });   // 交互 TUI（引擎渲染）
+const chosen = await pick(['alpha', 'beta'], { query: 'beta' });   // 交互 TUI（纯 TS 渲染）
 const chosen = await menu('db', ['mysql', 'postgres']);            // 数字 1-9 直选
 await histSet('git p', 'pull'); await histGet('git p');            // 选择记忆
 await confirmAdd('npm run', 'release'); await confirmCheck('npm run', 'release');
@@ -142,10 +144,10 @@ await confirmAdd('npm run', 'release'); await confirmCheck('npm run', 'release')
 const { pick, histGet } = require('@havocrao/picktui');
 ```
 
-引擎发现顺序：`$PICKTUI_BIN` → `$PATH` 中的 `picktui`。交互 TUI 由引擎跑在
-`/dev/tty`，宿主 stdout 不被污染（`$(...)` 安全）。无 TTY 时引擎自动退化
-（无 query 取首个、有 query 过滤取首），绑定无需分支。
-详见 [ts/README.md](ts/README.md)。
+纯 TS 实现：**零依赖、无需引擎二进制、无需环境变量，安装即用**。交互 TUI
+在 POSIX 上走 `/dev/tty`（宿主 stdout 干净，`$(...)` 安全），Windows 退化为
+宿主 stdio。无 TTY 时自动退化（无 query 取首个、有 query 过滤取首），
+调用方无需分支。详见 [ts/README.md](ts/README.md)。
 
 ### 引擎二进制（脚本直接消费）
 
@@ -171,9 +173,9 @@ stderr。完整协议见 [docs/integration/protocol.md](docs/integration/protoco
 | `import "github.com/havoc-rao/picktui/go"` | `go/` | Go 按 import path 找到仓库 `go/go.mod`（module `github.com/havoc-rao/picktui/go`，多模块仓库规范） |
 | `import '@havocrao/picktui'` | `ts/` | npm 发布物即 `ts/` 目录内容；包名与目录解耦 |
 | `import '@havocrao/picktui/tui'` | `ts/dist/esm/tui.js` | `package.json` `exports` 子路径映射（require → `dist/cjs/*.js`，types → `dist/types/*.d.ts`） |
-| `PICKTUI_BIN=/…/picktui` | 引擎二进制 | 跨语言消费引擎的唯一通道（TS 绑定/脚本），指向 `go/cmd/picktui` 构建产物 |
+| `PICKTUI_BIN=/…/picktui` | 引擎二进制 | 消费引擎的唯一通道（脚本/薄绑定宿主），指向 `go/cmd/picktui` 构建产物 |
 
-依赖方向只有一条：**ts/ → 引擎二进制（JSON 协议）**；ts/ 不依赖 go/ 的 Go
+TS 包为纯 TS 实现（语义对齐 Go 引擎，状态文件格式互兼容）；不依赖 go/ 的 Go
 代码，两边靠 [docs/integration/protocol.md](docs/integration/protocol.md) 契约对齐，互不编译依赖。
 
 ## 版本与发布

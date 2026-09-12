@@ -65,11 +65,3 @@ export class PicktuiError extends Error {
 export interface ResolveResult {
   value: string;
 }
-
-/** 引擎 version 输出（"picktui <semver>"）。 */
-export interface EngineVersion {
-  /** 完整输出行，如 "picktui 0.1.0"。 */
-  raw: string;
-  /** 语义化版本号，如 "0.1.0"。 */
-  version: string;
-}

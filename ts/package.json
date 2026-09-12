@@ -1,7 +1,7 @@
 {
   "name": "@havocrao/picktui",
-  "version": "0.1.0",
-  "description": "TUI candidate picker — TS/JS bindings for the picktui engine (protocol v1). Filter / pick / history / confirm, tree-shakable, same behavior as the Go engine.",
+  "version": "0.1.1",
+  "description": "TUI candidate picker — pure TypeScript implementation. Filter / pick / history / confirm, zero runtime dependencies, same semantics as the Go engine (no binary required).",
   "license": "MIT",
   "author": "havoc-rao",
   "keywords": [
@@ -59,7 +59,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/fixup.mjs",
-    "pretest": "node scripts/build-engine.mjs",
+    "pretest": "npm run build",
     "test": "node --test \"test/*.test.mjs\"",
     "test:pack": "npm run build && node scripts/test-pack.mjs",
     "prepack": "npm run build"

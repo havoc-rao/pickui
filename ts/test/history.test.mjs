@@ -1,7 +1,7 @@
-// history / confirm — 文件状态协议往返（隔离数据目录）。
+// history / confirm — 文件状态（纯 TS，TOML 格式与 Go 引擎兼容）。
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { picktui, withConfigDir } from './helper.mjs';
 
@@ -15,15 +15,30 @@ test('hist set → get 往返，无记录返回空串', async () => {
   assert.ok(existsSync(join(dir, 'history.toml')));
 });
 
-test('hist 覆盖写回；记忆与 Go 库 API 同文件（协议一致性）', async () => {
+test('hist 覆盖写回，多 label 互不干扰', async () => {
   withConfigDir(test);
   await histSet('git co', 'main');
   await histSet('git co', 'develop');
+  await histSet('other', 'x');
   assert.equal(await histGet('git co'), 'develop');
+  assert.equal(await histGet('other'), 'x');
+});
+
+test('history.toml 文件格式与 Go 引擎兼容（可被引擎 re-read）', async () => {
+  const dir = withConfigDir(test);
+  await histSet('git p', 'pull');
+  await histSet('git co', 'feature/x');
+  const text = readFileSync(join(dir, 'history.toml'), 'utf8');
+  // 表头注释 + 双引号 key（含空格）+ last 赋值，与 BurntSushi/toml 输出同构
+  assert.match(text, /^# picktui history — last selection per key \(auto-managed\)/);
+  assert.match(text, /\["git p"\]/);
+  assert.match(text, /last = "pull"/);
+  assert.match(text, /\["git co"\]/);
+  assert.match(text, /last = "feature\/x"/);
 });
 
 test('hist set 失败（数据目录被文件占用）→ PicktuiError', async () => {
-  const { mkdtempSync, writeFileSync } = await import('node:fs');
+  const { mkdtempSync } = await import('node:fs');
   const { tmpdir } = await import('node:os');
   const dir = mkdtempSync(join(tmpdir(), 'picktui-blocked-'));
   const blocked = join(dir, 'not-a-dir');
@@ -48,6 +63,17 @@ test('hist set 失败（数据目录被文件占用）→ PicktuiError', async (
   }
 });
 
+test('legacy picks.toml 自动迁移到 history.toml', async () => {
+  const dir = withConfigDir(test);
+  writeFileSync(
+    join(dir, 'picks.toml'),
+    '# old\n["git p"]\nlast = "pull"\n',
+  );
+  assert.equal(await histGet('git p'), 'pull');
+  assert.ok(!existsSync(join(dir, 'picks.toml')), '旧文件应被删除');
+  assert.ok(existsSync(join(dir, 'history.toml')));
+});
+
 test('confirm check/add 往返（幂等、跨 label 隔离）', async () => {
   const dir = withConfigDir(test);
   assert.equal(await confirmCheck('npm run', 'release'), false);
@@ -58,10 +84,32 @@ test('confirm check/add 往返（幂等、跨 label 隔离）', async () => {
   assert.ok(existsSync(join(dir, 'confirm.toml')));
 });
 
+test('confirm.toml 文件格式与 Go 引擎兼容', async () => {
+  const dir = withConfigDir(test);
+  await confirmAdd('npm run', 'release');
+  await confirmAdd('npm run', 'dev');
+  const text = readFileSync(join(dir, 'confirm.toml'), 'utf8');
+  assert.match(text, /^# picktui confirm — user-confirmed auto resolutions \(auto-managed\)/);
+  assert.match(text, /\[confirmed\]/);
+  assert.match(text, /"npm run" = \["release", "dev"\]/);
+});
+
 test('confirm add 幂等：重复添加不产生重复记录', async () => {
   withConfigDir(test);
   await confirmAdd('git co', 'main');
   await confirmAdd('git co', 'main');
-  // 读回 TOML 验证只有一条（引擎侧语义，允许简查：check 依然为 true）
   assert.equal(await confirmCheck('git co', 'main'), true);
+});
+
+test('confirm 读取 Go 引擎写出的文件（外部格式兼容）', async () => {
+  const dir = withConfigDir(test);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(
+    join(dir, 'confirm.toml'),
+    '# picktui confirm — user-confirmed auto resolutions (auto-managed)\n' +
+      '[confirmed]\n' +
+      '"docker exec" = ["release", "dev"]\n',
+  );
+  assert.equal(await confirmCheck('docker exec', 'release'), true);
+  assert.equal(await confirmCheck('docker exec', 'other'), false);
 });

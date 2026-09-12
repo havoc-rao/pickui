@@ -3,25 +3,17 @@
 //   import { pick } from '@havocrao/picktui/tui'
 //   const { histGet } = require('@havocrao/picktui')
 //
-// 用法：npm run test:pack（依赖已构建的 dist 与引擎二进制）。
+// 纯 TS 实现：零运行时依赖、无需引擎二进制，安装即用。
+//
+// 用法：npm run test:pack（依赖已构建的 dist）。
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, existsSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pkgRoot = join(here, '..');
-const engineCandidates = [
-  process.env.PICKTUI_BIN,
-  join(pkgRoot, '.engine-bin', process.platform === 'win32' ? 'picktui.exe' : 'picktui'),
-  join(pkgRoot, '..', 'dist', process.platform === 'win32' ? 'picktui.exe' : 'picktui'),
-].filter(Boolean);
-const engine = engineCandidates.find((c) => existsSync(c));
-if (!engine) {
-  console.error('[test-pack] 引擎二进制缺失：先运行 npm run pretest 或设置 PICKTUI_BIN');
-  process.exit(1);
-}
 
 const work = mkdtempSync(join(tmpdir(), 'picktui-pack-'));
 const npmEnv = { ...process.env, npm_config_cache: join(work, 'npm-cache') };
@@ -46,7 +38,6 @@ try {
     stdio: 'inherit',
   });
 
-  const env = { ...process.env, PICKTUI_BIN: engine };
   const smoke = `
     const assert = require('node:assert/strict');
     (async () => {
@@ -54,7 +45,7 @@ try {
       process.env.PICKTUI_CONFIG_DIR =
         require('node:fs').mkdtempSync(require('node:os').tmpdir() + '/picktui-pack-state-');
       // ESM：聚合入口 + 子路径（tree-shakable 契约）
-      const { filter, resolve, histGet, histSet, confirmAdd, confirmCheck, engineVersion } =
+      const { filter, resolve, histGet, histSet, confirmAdd, confirmCheck, VERSION } =
         await import('@havocrao/picktui');
       const { pick } = await import('@havocrao/picktui/tui');
       const { menu } = await import('@havocrao/picktui/tui');
@@ -74,17 +65,17 @@ try {
       assert.equal(await confirmAdd('pack test', 'x'), true);
       assert.equal(await confirmCheck('pack test', 'x'), true);
       assert.equal(typeof cjs.pick, 'function');
-      assert.match(await engineVersion(), /^\\d+\\.\\d+\\.\\d+$/);
+      assert.match(VERSION, /^\\d+\\.\\d+\\.\\d+$/);
 
       await menu('only-label', []).then(
         () => { throw new Error('menu usage 应拒绝'); },
         (e) => assert.equal(e.exitCode, 2),
       );
-      console.log('[test-pack] OK: esm + subpath + cjs 全部可调用');
+      console.log('[test-pack] OK: esm + subpath + cjs 全部可调用（无引擎二进制）');
     })().catch((e) => { console.error(e); process.exit(1); });
   `;
 
-  execFileSync(process.execPath, ['-e', smoke], { cwd: join(work, 'app'), env, stdio: 'inherit' });
+  execFileSync(process.execPath, ['-e', smoke], { cwd: join(work, 'app'), env: process.env, stdio: 'inherit' });
 } finally {
   rmSync(work, { recursive: true, force: true });
 }
